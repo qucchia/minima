@@ -1,13 +1,15 @@
-## Running React on Repl.it
+## Minima
 
-[React](https://reactjs.org/) is a popular JavaScript library for building user interfaces.
+Minima is a work-in-progress chatting web application.
 
-[Vite](https://vitejs.dev/) is a blazing fast frontend build tool that includes features like Hot Module Reloading (HMR), optimized builds, and TypeScript support out of the box.
+## Tools
 
-Using the two in conjunction is one of the fastest ways to build a web app.
+- [Remixicon](https://remixicon.com/)
+- [Vite](https://vitejs.dev/)
 
-### Getting Started
-- Hit run
-- Edit [App.tsx](#src/App.tsx) and watch it live update!
+## To-do
 
-By default, Replit runs the `dev` script, but you can configure it by changing the `run` field in the [configuration file](#.replit). Here are the vite docs for [serving production websites](https://vitejs.dev/guide/build.html)
+- Emoji
+- Remixicons (using [GitHub API](https://docs.github.com/es/rest/git/trees#get-a-tree))
+- Bible quotes
+- Proper file uploading

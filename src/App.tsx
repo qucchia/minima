@@ -12,12 +12,15 @@ import {
 } from "./types/index";
 import Messages from "./components/Messages";
 import TextBox from "./components/TextBox";
+import Users from "./components/Users";
 
 const SERVER = "wss://minima-server.qucchia0.repl.co";
 
 export type State = {
   user?: User;
+  users: User[];
   messages: Message[];
+  notSentMessages: Message[];
   connectionStatus: ConnectionStatus;
   scrolledToBottom: boolean;
   hover?: Hover;
@@ -38,6 +41,7 @@ export default class App extends Component<{}, State> {
         ?.split('=')[1];
     }
 
+    // Get session if stored in cookies
     const username = getCookie("username");
     const id = parseInt(getCookie("id"));
     const status =
@@ -46,7 +50,10 @@ export default class App extends Component<{}, State> {
     
     this.state = {
       user: username ? { username, id, status } : undefined,
+      users: [],
+      // Load messages from Storage if stored
       messages: JSON.parse(localStorage.getItem("messages") || "[]"),
+      notSentMessages: [],
       connectionStatus: ConnectionStatus.CONNECTING,
       scrolledToBottom: true,
       loadedAll: false,
@@ -69,9 +76,22 @@ export default class App extends Component<{}, State> {
   connect() {
     this.state.webSocket.onerror = () => {
       this.setState({ connectionStatus: ConnectionStatus.ERROR });
+      this.reconnect();
     }
 
     this.state.webSocket.onopen = () => {
+      // Request messages
+      if (this.state.messages.length) {
+        this.send({
+          type: "fetch",
+          before: Infinity,
+          after: this.state.messages[this.state.messages.length - 1].id
+        });
+      } else {
+        // Some messages have been loaded from storage
+        this.send({ type: "fetch", before: Infinity });
+      }
+      // Send messages that haven't been sent
       const messages = this.state.messages;
       messages.filter((message) => message.notSent)
         .forEach((message) => {
@@ -79,10 +99,17 @@ export default class App extends Component<{}, State> {
           this.send({ type: "message", message });
         });
       
-      this.setState({ messages, connectionStatus: ConnectionStatus.OPEN });
-      this.send({
-        type: "user",
-      })
+      this.setState({
+        notSentMessages: [],
+        connectionStatus: ConnectionStatus.OPEN
+      });
+      
+      if (this.state.user) {
+        this.send({
+          type: "user",
+          user: this.state.user
+        });
+      }
     }
     
     this.state.webSocket.onclose = () => {
@@ -118,6 +145,19 @@ export default class App extends Component<{}, State> {
           
           if (wsMessage.start) this.setState({ loadedAll: true });
           break;
+        case "users":
+          console.log("Received users");
+          const users = this.state.users;
+          console.log(users, wsMessage.users);
+          wsMessage.users.forEach((user) => {
+            const i = users.findIndex((u) => u.id === user.id);
+            if (i === -1) {
+              users.push(user);
+            } else {
+              users[i] = user;
+            }
+          });
+          this.setState({ users });
       }
     }
   }
@@ -138,26 +178,29 @@ export default class App extends Component<{}, State> {
       document.cookie = `username=${content}; SameSite=None; Secure`;
       document.cookie = `id=${id}; SameSite=None; Secure`;
       document.cookie = `status=${status}; SameSite=None; Secure`;
-      return this.setState({
-        user: { id, username: content as string, status }
-      });
+      const user = { id, username: content as string, status }
+      this.setState({ user });
+      this.send({ type: "user", user });
+      return;
     }
     
-    const message: Message= {
+    const message: Message = {
       content,
       image: options?.image,
       author: { username: this.state.user.username, id: this.state.user.id },
       id: Date.now(),
-      notSent: !this.state.connectionStatus,
     };
 
     if (this.state.connectionStatus) {
       this.send({ type: "message", message });
+      this.setState({
+        messages: this.state.messages.concat([message])
+      });
+    } else {
+      this.setState({
+        notSentMessages: this.state.notSentMessages.concat([message])
+      });
     }
-    
-    this.setState({
-      messages: this.state.messages.concat([message])
-    });
   }
 
   handleHover = (hover: Hover, h: boolean) => {
@@ -174,21 +217,16 @@ export default class App extends Component<{}, State> {
         <header>
           <h1>Minima</h1>
         </header>
-        <Messages
-          messages={this.state.messages}
-          user={this.state.user}
-          loadedAll={this.state.loadedAll}
-          onChangeName={() => this.setState({
-            user: {
-              username: "",
-              id: this.state.user?.id || Date.now(),
-              status: this.state.user.status,
-            }
-          })}
-          onHover={this.handleHover}
-          onLoadMore={this.handleLoadMore}
-          hover={this.state.hover}
-        />
+        <main>
+          <Messages
+            messages={this.state.messages}
+            user={this.state.user}
+            loadedAll={this.state.loadedAll}
+            onHover={this.handleHover}
+            onLoadMore={this.handleLoadMore}
+            hover={this.state.hover}
+          />
+        </main>
         <footer>
           {(() => {
             switch(this.state.connectionStatus) {
@@ -203,8 +241,21 @@ export default class App extends Component<{}, State> {
           <TextBox
             onSend={this.handleSend}
             enterName={!this.state.user || !this.state.user.username}
+            onChangeName={() => {
+              this.setState({
+              user: {
+                username: "",
+                id: this.state.user?.id || Date.now(),
+                status: this.state.user.status,
+              }
+            })}}
           />
         </footer>
+        <aside>
+          <Users
+            users={[this.state.user].concat(this.state.users)}
+            />
+          </aside>
       </>
     )
   }

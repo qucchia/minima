@@ -7,7 +7,6 @@ type Props = {
   user?: User;
   messages: MessageProps[];
   loadedAll: boolean;
-  onChangeName: () => void;
   onHover: (hover: Hover, h: boolean) => void;
   hover?: Hover;
   onLoadMore: () => void;
@@ -43,7 +42,6 @@ export default class Messages extends Component<Props, State> {
               id={message.id}
               notSent={message.notSent}
               user={!!this.props.user && message.author.id === this.props.user.id}
-              onChangeName={this.props.onChangeName}
               onHover={this.props.onHover}
               hover={!!this.props.hover &&
                 "message" in this.props.hover &&

@@ -33,23 +33,22 @@ export type ClientMessage = {
   message: Message,
 } | {
   type: "fetch",
-  before: number,
-} | {
-  type: "fetch",
-  after: number,
+  before?: number,
+  after?: number,
 } | {
   type: "delete",
   deleteType: "message",
   id: number,
 } | {
   type: "user",
-  username: string,
-  id: number,
-  status: UserStatus,
+  user: User,
 };
 
 export type ServerMessage = {
   type: "messages",
   messages: Message[],
   start: boolean,
-} | ({ type: "user" } & User);
+} | {
+  type: "users",
+  users: User[]
+};

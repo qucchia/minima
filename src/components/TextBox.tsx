@@ -1,16 +1,26 @@
 import { Component, KeyboardEvent } from "react";
+import ButtonIcon from "./ButtonIcon";
+import Icon from "./Icon";
 
 type Props = {
   onSend: (message: string) => void;
   enterName: boolean;
+  onChangeName: () => void;
 }
 
-export default class TextBox extends Component<Props> {
+export default class TextBox extends Component<Props, {
+  text: string;
+}> {
   constructor(props: Props) {
     super(props);
+    
+    this.state = {
+      text: ""
+    };
   }
   
   render() {
+    console.log(this.state.text);
     return (
       <div id="text-box">
         {this.props.enterName && <label htmlFor="text-box">
@@ -18,7 +28,9 @@ export default class TextBox extends Component<Props> {
         </label>}
         {!this.props.enterName &&
           <>
-            <label id="upload-label" htmlFor="upload">Upload</label>
+            <label id="upload-label" htmlFor="upload" title="Upload">
+              <Icon icon="chat-upload" />
+            </label>
             <input
               type="file"
               name="upload"
@@ -35,18 +47,26 @@ export default class TextBox extends Component<Props> {
                 reader.readAsDataURL((e.target.files as FileList)[0]);
               }}
             />
+            <ButtonIcon
+              className="icon-button"
+              title="Change nickname"
+              onClick={this.props.onChangeName}
+            />
           </>}
-        <input
-            type="text"
-            name="text-box"
-            autoFocus={true}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && e.target.value) {
-                this.props.onSend(e.target.value);
-                e.target.value = "";
-              }
-            }}
-          />
+        <textarea
+          rows={this.state.text.split("\n").length}
+          autoFocus={true}
+          onKeyPress={(e) => {
+            console.log(e);
+            this.setState({ text: e.value });
+            if (e.key === "Enter" && e.target.value && !e.shiftKey) {
+              this.props.onSend(e.target.value);
+              this.setState({ text: "" });
+            }
+          }}
+          value={this.state.text}
+        >
+        </textarea>
       </div>
     );
   }

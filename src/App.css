@@ -83,6 +83,7 @@ aside {
 #text-box textarea {
   padding: 5px;
   width: 100%;
+  resize: none;
 }
 
 h1 {

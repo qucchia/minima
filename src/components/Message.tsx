@@ -1,36 +1,36 @@
 import { Hover, Message as MessageProps } from "../types/index";
 
-export default function Message(props: MessageProps & {
+export default function Message(props: {
+  message: MessageProps;
   user: boolean;
+  author: boolean;
   onHover: (hover: Hover, h: boolean) => void;
   hover: boolean;
 }) {
   return (
     <div
       className="message"
-      onMouseEnter={() => props.onHover({ message: props.id }, true)}
-      onMouseLeave={() => props.onHover({ message: props.id }, false)}
+      onMouseEnter={() => props.onHover({ message: props.message.id }, true)}
+      onMouseLeave={() => props.onHover({ message: props.message.id }, false)}
     >
-      <p>
+        {props.author && 
         <span className="author-line">
-          <span className="author">{props.author.username}</span>
-          <span className="time">{new Date(props.id).toString().substring(16,21)}</span>
+          <span className="author">{props.message.author.username}</span>
+          <span className="time">{new Date(props.message.id).toString().substring(16,21)}</span>
           {props.hover && props.user &&
             <button onClick={() => alert("Not implemented")}>
               Delete
             </button>}
-        </span>
-        <br/>
+        </span>}
         <span
           className="message-content"
-          style={props.notSent ? { fontStyle: "italic" } : {}}
+          style={props.message.notSent ? { fontStyle: "italic" } : {}}
         >
-          {props.content}
+          {props.message.content}
         </span>
-        {props.image && <a href={props.image} target="_blank">
-          <img src={props.image} />
+        {props.image && <a href={props.message.image} target="_blank">
+          <img src={props.message.image} />
         </a>}
-      </p>
     </div>
   )
 }

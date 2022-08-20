@@ -51,6 +51,7 @@ aside {
 }
 
 .message .author-line {
+  margin-top: 15px;
   display: flex;
   gap: 10px;
 }

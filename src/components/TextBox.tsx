@@ -20,7 +20,6 @@ export default class TextBox extends Component<Props, {
   }
   
   render() {
-    console.log(this.state.text);
     return (
       <div id="text-box">
         {this.props.enterName && <label htmlFor="text-box">
@@ -57,12 +56,13 @@ export default class TextBox extends Component<Props, {
           rows={this.state.text.split("\n").length}
           autoFocus={true}
           onKeyPress={(e) => {
-            console.log(e);
-            this.setState({ text: e.value });
             if (e.key === "Enter" && e.target.value && !e.shiftKey) {
               this.props.onSend(e.target.value);
               this.setState({ text: "" });
             }
+          }}
+          onChange={(e) => {
+            this.setState({ text: e.target.value });
           }}
           value={this.state.text}
         >

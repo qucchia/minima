@@ -3,6 +3,8 @@ import Message from "./Message";
 import LoadMore from "./LoadMore";
 import { Hover, Message as MessageProps, User } from "../types/index";
 
+const MAX_TIME_BETWEEN_GROUPED_MESSAGES = 5 * 60 * 1000; // 5 minutes
+
 type Props = {
   user?: User;
   messages: MessageProps[];
@@ -27,26 +29,35 @@ export default class Messages extends Component<Props, State> {
   }
   
   render() {
+    let lastAuthorId = NaN;
+    let lastMessageId = NaN;
+    
     return (
       <div id="messages">
         {this.props.loadedAll
           ? <p>Beginning of chat</p>
           : <LoadMore onClick={this.props.onLoadMore} />}
         {this.props.messages.map(
-          (message, i) =>
-            <Message
-              key={i}
-              author={message.author}
-              content={message.content}
-              image={message.image}
-              id={message.id}
-              notSent={message.notSent}
-              user={!!this.props.user && message.author.id === this.props.user.id}
-              onHover={this.props.onHover}
-              hover={!!this.props.hover &&
-                "message" in this.props.hover &&
-                this.props.hover.message === message.id}
-            />)}
+          (message, i) => {
+            const m = (
+              <Message
+                key={i}
+                message={message}
+                author={
+                  message.author.id !== lastAuthorId ||
+                  (message.id - lastMessageId) > MAX_TIME_BETWEEN_GROUPED_MESSAGES
+                }
+                user={!!this.props.user && message.author.id === this.props.user.id}
+                onHover={this.props.onHover}
+                hover={!!this.props.hover &&
+                  "message" in this.props.hover &&
+                  this.props.hover.message === message.id}
+              />
+            )
+            lastAuthorId = message.author.id;
+            lastMessageId = message.id;
+            return m;
+        })}
       </div>
     );
   }

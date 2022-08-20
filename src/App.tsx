@@ -122,7 +122,7 @@ export default class App extends Component<{}, State> {
 
       switch (wsMessage.type) {
         case "messages":
-          console.log("Received messages", wsMessage);
+          console.log("Received messages");
           let messages = this.state.messages;
           wsMessage.messages.forEach((msg) => {
             if (!messages.find((m) => m.id === msg.id)) {
@@ -140,7 +140,6 @@ export default class App extends Component<{}, State> {
               storageMessages.length
             );
           }
-          console.log(storageMessages)
           localStorage.setItem("messages", JSON.stringify(storageMessages));
           
           if (wsMessage.start) this.setState({ loadedAll: true });
@@ -148,7 +147,6 @@ export default class App extends Component<{}, State> {
         case "users":
           console.log("Received users");
           const users = this.state.users;
-          console.log(users, wsMessage.users);
           wsMessage.users.forEach((user) => {
             const i = users.findIndex((u) => u.id === user.id);
             if (i === -1) {

@@ -1,9 +1,9 @@
-import { Component } from "react";
+import { Component, MouseEvent} from "react";
 import Icon from "./Icon";
 
 type Props = {
   icon: string;
-  onClick: (e: Event) => void;
+  onClick: (e: MouseEvent) => void;
   title: string;
 }
 

@@ -22,11 +22,11 @@ export default class TextBox extends Component<Props, {
   render() {
     return (
       <div id="text-box">
-        {this.props.enterName && <label htmlFor="text-box">
-          Enter&nbsp;a&nbsp;nickname:
-        </label>}
-        {!this.props.enterName &&
-          <>
+        {this.props.enterName
+          ? <label htmlFor="text-box">
+            Enter&nbsp;a&nbsp;nickname:
+          </label>
+          : <>
             <label id="upload-label" htmlFor="upload" title="Upload">
               <Icon icon="chat-upload" />
             </label>
@@ -47,7 +47,7 @@ export default class TextBox extends Component<Props, {
               }}
             />
             <ButtonIcon
-              icon="icon-button"
+              icon="edit"
               title="Change nickname"
               onClick={this.props.onChangeName}
             />

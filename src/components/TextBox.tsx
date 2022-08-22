@@ -3,7 +3,7 @@ import ButtonIcon from "./ButtonIcon";
 import Icon from "./Icon";
 
 type Props = {
-  onSend: (message: string) => void;
+  onSend: (message: string | undefined, options?: any) => void;
   enterName: boolean;
   onChangeName: () => void;
 }
@@ -53,6 +53,7 @@ export default class TextBox extends Component<Props, {
             />
           </>}
         <textarea
+          autoFocus={true}
           style={{ height: this.state.text.split("\n").length * 16 + "px"}}
           onKeyPress={(e) => {
             if (e.key === "Enter" && e.target.value && !e.shiftKey) {

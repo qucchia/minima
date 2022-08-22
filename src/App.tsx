@@ -43,10 +43,10 @@ export default class App extends Component<{}, State> {
 
     // Get session if stored in cookies
     const username = getCookie("username");
-    const id = parseInt(getCookie("id"));
+    const id = parseInt(getCookie("id") || "0");
     const status =
-      parseInt(getCookie("status")) as ConnectionStatus
-      || ConnectionStatus.ONLINE;
+      parseInt(getCookie("status") || "0") as UserStatus
+      || UserStatus.ONLINE;
     
     this.state = {
       user: username ? { username, id, status } : undefined,
@@ -84,20 +84,17 @@ export default class App extends Component<{}, State> {
       if (this.state.messages.length) {
         this.send({
           type: "fetch",
-          before: Infinity,
+          before: 1e100,
           after: this.state.messages[this.state.messages.length - 1].id
         });
       } else {
         // Some messages have been loaded from storage
-        this.send({ type: "fetch", before: Infinity });
+        this.send({ type: "fetch", last: true });
       }
       // Send messages that haven't been sent
-      const messages = this.state.messages;
-      messages.filter((message) => message.notSent)
-        .forEach((message) => {
-          message.notSent = false;
-          this.send({ type: "message", message });
-        });
+      this.state.notSentMessages.forEach((message) => {
+        this.send({ type: "message", message });
+      });
       
       this.setState({
         notSentMessages: [],
@@ -123,6 +120,7 @@ export default class App extends Component<{}, State> {
       switch (wsMessage.type) {
         case "messages":
           console.log("Received messages");
+          console.log(wsMessage);
           let messages = this.state.messages;
           wsMessage.messages.forEach((msg) => {
             if (!messages.find((m) => m.id === msg.id)) {

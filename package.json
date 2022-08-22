@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "react-string-replace": "^1.1.0",
     "remixicon": "^2.5.0"
   },
   "devDependencies": {

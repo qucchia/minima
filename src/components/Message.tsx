@@ -1,51 +1,5 @@
 import { Hover, Message as MessageProps } from "../types/index";
-import { ReactNode } from "react";
-import reactStringReplace from "react-string-replace";
-
-const punctuation = "(?:.*[ .()?!:]|)";
-
-const replaceTable = [
-  {
-    regex: /\B[*]\b(.*)\b[*]\B/g,
-    replace: (match: string) => <b>{formatOrg(match)}</b>,
-  },
-  {
-    regex: /\B[/]\b(.*)\b[/]\B/g,
-    replace: (match: string) => <i>{formatOrg(match)}</i>,
-  },
-  {
-    regex: /\b[_](.*)[_]\b/g,
-    replace: (match: string) => <u>{formatOrg(match)}</u>,
-  },
-  {
-    regex: /[+]\b(.*)\b[+]/g,
-    replace: (match: string) => <del>{formatOrg(match)}</del>,
-  },
-  {
-    regex: /\[\[(.*\]\[.*)\]\]/g,
-    replace: (match: string) =>
-      <a
-        href={match.split("][")[0]}
-        target="_blank"
-      >
-        {formatOrg(match.split("][")[1])}
-      </a>,
-  },
-]
-
-function formatOrg(content: string) {
-  let items: (string | ReactNode)[] = [content];
-  replaceTable.forEach(({ regex, replace }) => {
-    items = items.map(
-      (item) => typeof item === "string"
-      ? reactStringReplace(
-          item, regex, replace
-        )
-      : item
-    ).flat()
-  });
-  return items;
-}
+import OrgFormat from "./OrgFormat";
 
 export default function Message(props: {
   message: MessageProps;
@@ -73,7 +27,8 @@ export default function Message(props: {
           className="message-content"
           style={props.message.notSent ? { fontStyle: "italic" } : {}}
         >
-          {formatOrg(props.message.content)}
+          {props.message.content &&
+            <OrgFormat content={props.message.content} />}
         </span>
         {props.image && <a href={props.message.image} target="_blank">
           <img src={props.message.image} />

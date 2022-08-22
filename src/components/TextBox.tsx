@@ -1,4 +1,4 @@
-import { Component, KeyboardEvent } from "react";
+import { Component } from "react";
 import ButtonIcon from "./ButtonIcon";
 import Icon from "./Icon";
 
@@ -47,20 +47,21 @@ export default class TextBox extends Component<Props, {
               }}
             />
             <ButtonIcon
-              className="icon-button"
+              icon="icon-button"
               title="Change nickname"
               onClick={this.props.onChangeName}
             />
           </>}
         <textarea
-          rows={this.state.text.split("\n").length}
-          autoFocus={true}
+          style={{ height: this.state.text.split("\n").length * 16 + "px"}}
           onKeyPress={(e) => {
             if (e.key === "Enter" && e.target.value && !e.shiftKey) {
+              e.preventDefault();
               this.props.onSend(e.target.value);
               this.setState({ text: "" });
             }
           }}
+          rows={this.state.text.split("\n").length}
           onChange={(e) => {
             this.setState({ text: e.target.value });
           }}

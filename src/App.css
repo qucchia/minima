@@ -82,6 +82,8 @@ aside {
 }
 
 #text-box textarea {
+  font-family: inherit;
+  font-size: 16px;
   padding: 5px;
   width: 100%;
   resize: none;

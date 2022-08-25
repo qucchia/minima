@@ -120,7 +120,6 @@ export default class App extends Component<{}, State> {
       switch (wsMessage.type) {
         case "messages":
           console.log("Received messages");
-          console.log(wsMessage);
           let messages = this.state.messages;
           wsMessage.messages.forEach((msg) => {
             if (!messages.find((m) => m.id === msg.id)) {

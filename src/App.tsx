@@ -18,6 +18,7 @@ const SERVER = "wss://minima-server.qucchia0.repl.co";
 
 export type State = {
   user?: User;
+  enterName: boolean;
   users: User[];
   messages: Message[];
   notSentMessages: Message[];
@@ -71,6 +72,10 @@ export default class App extends Component<{}, State> {
 
   setUser(user: User) {
     
+  }
+
+  getUsers() {
+    return (this.state.user ? [this.state.user] : []).concat(this.state.users);
   }
   
   connect() {
@@ -182,7 +187,7 @@ export default class App extends Component<{}, State> {
     const message: Message = {
       content,
       image: options?.image,
-      author: { username: this.state.user.username, id: this.state.user.id },
+      authorId: this.state.user.id,
       id: Date.now(),
     };
 
@@ -216,6 +221,7 @@ export default class App extends Component<{}, State> {
           messages={this.state.messages}
           notSentMessages={this.state.notSentMessages}
           user={this.state.user}
+          users={this.getUsers()}
           loadedAll={this.state.loadedAll}
           onHover={this.handleHover}
           onLoadMore={this.handleLoadMore}
@@ -235,21 +241,12 @@ export default class App extends Component<{}, State> {
           <TextBox
             onSend={this.handleSend}
             enterName={!this.state.user || !this.state.user.username}
-            onChangeName={() => {
-              this.setState({
-              user: {
-                username: "",
-                id: this.state.user?.id || Date.now(),
-                status: this.state.user.status,
-              }
-            })}}
+            onChangeName={() =>  this.setState({ enterName: true })}
           />
         </footer>
         <aside>
-          <Users
-            users={[this.state.user].concat(this.state.users)}
-            />
-          </aside>
+          <Users users={this.getUsers()} />
+        </aside>
       </>
     )
   }

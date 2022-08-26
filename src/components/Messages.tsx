@@ -7,6 +7,7 @@ const MAX_TIME_BETWEEN_GROUPED_MESSAGES = 5 * 60 * 1000; // 5 minutes
 
 export default function Messages(props: {
   user?: User;
+  users: User[];
   messages: MessageProps[];
   notSentMessages: MessageProps[];
   loadedAll: boolean;
@@ -31,26 +32,28 @@ export default function Messages(props: {
       (message, i) => {
         const m = (
           <Message
-            notSent={notSent}
             key={i}
             message={message}
-            author={
-              message.author.id !== lastAuthorId ||
+            author={props.users.find((user) => user.id === message.authorId)}
+            showAuthor={
+              message.authorId !== lastAuthorId ||
               (message.id - lastMessageId) > MAX_TIME_BETWEEN_GROUPED_MESSAGES
             }
-            user={!!props.user && message.author.id === props.user.id}
+            user={!!props.user && message.authorId.id === props.user.id}
             onHover={props.onHover}
             hover={!!props.hover &&
               "message" in props.hover &&
               props.hover.message === message.id}
+            notSent={notSent}
           />
         )
-        lastAuthorId = message.author.id;
+        lastAuthorId = message.authorId;
         lastMessageId = message.id;
         return m;
     });
   }
-  
+
+  console.log(props.messages, props.users)
   return (
     <main
       onScroll={(e) => {

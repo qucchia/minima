@@ -7,17 +7,17 @@ export enum ConnectionStatus {
   CLOSED,
 };
 
-export type Author = {
+export type User = {
   username: string;
   id: number;
-}
-
-export type User = Author & { status: UserStatus };
+  profilePicture?: string;
+  status: UserStatus;
+};
 
 export type Message = {
   content?: string;
   image?: string;
-  author: Author;
+  authorId: number;
   id: number;
 }
 
@@ -28,30 +28,14 @@ export enum UserStatus {
   DO_NOT_DISTURB,
 }
 
-export type ClientMessage = {
-  type: "message",
-  message: Message,
-} | {
-  type: "fetch",
-  after: number,
-} | {
-  type: "fetch",
-  before: number,
-} | {
-  type: "fetch",
-  last: true,
-} | {
-  type: "fetch",
-  after: number,
-  before: number,
-} | {
-  type: "delete",
-  deleteType: "message",
-  id: number,
-} | {
-  type: "user",
-  user: User,
-};
+export type ClientMessage =
+  | { type: "message", message: Message }
+  | { type: "fetch", after: number }
+  | { type: "fetch", before: number }
+  | { type: "fetch", last: true }
+  | { type: "fetch", after: number, before: number }
+  | { type: "delete", deleteType: "message", id: number }
+  | { type: "user", user: User };
 
 export type ServerMessage = {
   type: "messages",

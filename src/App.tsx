@@ -212,17 +212,15 @@ export default class App extends Component<{}, State> {
         <header>
           <h1>Minima</h1>
         </header>
-        <main>
-          <Messages
-            messages={this.state.messages}
-            notSentMessages={this.state.notSentMessages}
-            user={this.state.user}
-            loadedAll={this.state.loadedAll}
-            onHover={this.handleHover}
-            onLoadMore={this.handleLoadMore}
-            hover={this.state.hover}
-          />
-        </main>
+        <Messages
+          messages={this.state.messages}
+          notSentMessages={this.state.notSentMessages}
+          user={this.state.user}
+          loadedAll={this.state.loadedAll}
+          onHover={this.handleHover}
+          onLoadMore={this.handleLoadMore}
+          hover={this.state.hover}
+        />
         <footer>
           {(() => {
             switch(this.state.connectionStatus) {

@@ -1,4 +1,4 @@
-import { Component, useRef, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import LoadMore from "./LoadMore";
 import { Hover, Message as MessageProps, User } from "../types/index";

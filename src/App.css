@@ -17,10 +17,10 @@ html, body, #root {
   top: 0;
   left: 0;
   right: 0;
-  margin: 25px;
+  margin: 32px;
   
   display: grid;
-  gap: 20px;
+  gap: 16px;
   grid-template-columns: 1fr min-content;
   grid-template-rows: min-content 1fr min-content;
   grid-template-areas: 
@@ -36,6 +36,9 @@ header {
 main {
   grid-area: main;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 footer {
@@ -46,14 +49,26 @@ aside {
   grid-area: sidebar;
 }
 
+.message-group {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: start;
+}
+
+.message-group .profile-picture {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
+}
+
 .message:hover {
   background-color: #eee;
 }
 
 .message .author-line {
-  margin-top: 15px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .message .author {

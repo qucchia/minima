@@ -7,6 +7,7 @@ export default function Message(props: {
   author: boolean;
   onHover: (hover: Hover, h: boolean) => void;
   hover: boolean;
+  notSent: boolean;
 }) {
   return (
     <div
@@ -25,12 +26,12 @@ export default function Message(props: {
         </span>}
         <span
           className="message-content"
-          style={props.message.notSent ? { fontStyle: "italic" } : {}}
+          style={props.notSent ? { fontStyle: "italic" } : {}}
         >
           {props.message.content &&
             <OrgFormat content={props.message.content} />}
         </span>
-        {props.image && <a href={props.message.image} target="_blank">
+        {props.message.image && <a href={props.message.image} target="_blank">
           <img src={props.message.image} />
         </a>}
     </div>

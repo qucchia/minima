@@ -186,7 +186,7 @@ export default class App extends Component<{}, State> {
       id: Date.now(),
     };
 
-    if (this.state.connectionStatus) {
+    if (this.state.connectionStatus === ConnectionStatus.OPEN) {
       this.send({ type: "message", message });
       this.setState({
         messages: this.state.messages.concat([message])
@@ -215,6 +215,7 @@ export default class App extends Component<{}, State> {
         <main>
           <Messages
             messages={this.state.messages}
+            notSentMessages={this.state.notSentMessages}
             user={this.state.user}
             loadedAll={this.state.loadedAll}
             onHover={this.handleHover}

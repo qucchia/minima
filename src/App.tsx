@@ -5,12 +5,13 @@ import {
   ClientMessage,
   ConnectionStatus,
   Hover,
+  APIMessage,
   Message,
   ServerMessage,
   User,
   UserStatus,
 } from "./types/index";
-import Messages from "./components/Messages";
+import Messages from "./components/messages/Messages";
 import TextBox from "./components/TextBox";
 import Users from "./components/Users";
 
@@ -21,7 +22,6 @@ export type State = {
   enterName: boolean;
   users: User[];
   messages: Message[];
-  notSentMessages: Message[];
   connectionStatus: ConnectionStatus;
   scrolledToBottom: boolean;
   hover?: Hover;
@@ -48,13 +48,23 @@ export default class App extends Component<{}, State> {
     const status =
       parseInt(getCookie("status") || "0") as UserStatus
       || UserStatus.ONLINE;
+    const user = username ? { username, id, status } : undefined;
+
+    // Load messages from Storage if stored
+    let messages: Message[];
+    try {
+      messages = JSON.parse(localStorage.getItem("messages") || "[]")
+        .map((messageAPI) => new Message(messageAPI));
+    } catch (e) {
+      console.log("Invalid local Storage: clearing");
+      messages = [];
+      localStorage.setItem("messages", "[]");
+    }
     
     this.state = {
-      user: username ? { username, id, status } : undefined,
+      user,
       users: [],
-      // Load messages from Storage if stored
-      messages: JSON.parse(localStorage.getItem("messages") || "[]"),
-      notSentMessages: [],
+      messages,
       connectionStatus: ConnectionStatus.CONNECTING,
       scrolledToBottom: true,
       loadedAll: false,
@@ -86,7 +96,7 @@ export default class App extends Component<{}, State> {
 
     this.state.webSocket.onopen = () => {
       // Request messages
-      if (this.state.messages.length) {
+      if (this.state.messages.filter((m) => m.sent).length) {
         this.send({
           type: "fetch",
           before: 1e100,
@@ -96,15 +106,8 @@ export default class App extends Component<{}, State> {
         // Some messages have been loaded from storage
         this.send({ type: "fetch", last: true });
       }
-      // Send messages that haven't been sent
-      this.state.notSentMessages.forEach((message) => {
-        this.send({ type: "message", message });
-      });
       
-      this.setState({
-        notSentMessages: [],
-        connectionStatus: ConnectionStatus.OPEN
-      });
+      this.setState({ connectionStatus: ConnectionStatus.OPEN });
       
       if (this.state.user) {
         this.send({
@@ -184,23 +187,19 @@ export default class App extends Component<{}, State> {
       return;
     }
     
-    const message: Message = {
+    const message = new Message({
       content,
       image: options?.image,
       authorId: this.state.user.id,
       id: Date.now(),
-    };
+      sent: this.state.connectionStatus === ConnectionStatus.OPEN
+    });
 
     if (this.state.connectionStatus === ConnectionStatus.OPEN) {
-      this.send({ type: "message", message });
-      this.setState({
-        messages: this.state.messages.concat([message])
-      });
-    } else {
-      this.setState({
-        notSentMessages: this.state.notSentMessages.concat([message])
-      });
-    }
+      this.send({ type: "message", message: message.export() });
+    } 
+    
+    this.setState({ messages: this.state.messages.concat([message]) });
   }
 
   handleHover = (hover: Hover, h: boolean) => {
@@ -219,7 +218,6 @@ export default class App extends Component<{}, State> {
         </header>
         <Messages
           messages={this.state.messages}
-          notSentMessages={this.state.notSentMessages}
           user={this.state.user}
           users={this.getUsers()}
           loadedAll={this.state.loadedAll}

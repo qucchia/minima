@@ -1,6 +1,6 @@
 import { APIMessage, User } from "../types/index";
 import Message from "./Message";
-import ProfilePicture from "./ProfilePicture";
+import ProfilePicture from "../ProfilePicture";
 
 export default function MessageGroup({ messages, author }: {
   messages: APIMessage[];

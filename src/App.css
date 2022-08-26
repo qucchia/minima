@@ -90,6 +90,24 @@ aside {
   min-width: 200px;
 }
 
+#users ul {
+  padding: 0;
+}
+
+.user {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.user .profile-picture {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+
 #text-box {
   display: flex;
   gap: 10px;

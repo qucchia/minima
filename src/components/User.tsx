@@ -1,18 +1,16 @@
 import { Component } from "react";
 import { User as UserProps } from "../types/index";
+import ProfilePicture from "./ProfilePicture";
 
 type Props = {
   user: UserProps;
 }
 
-export default class User extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <li>{this.props.user.username}</li>
-    );
-  }
+export default function User({ user }: { user: UserProps }) {
+  return (
+    <li className="user">
+      <ProfilePicture image={user.profilePicture} />
+      <span>{user.username}</span>
+    </li>
+  );
 }

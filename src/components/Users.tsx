@@ -16,6 +16,7 @@ export default class Users extends Component<Props> {
       .filter((user) => user && user.status !== UserStatus.OFFLINE);
     const offlineUsers = this.props.users
       .filter((user) => user && user.status === UserStatus.OFFLINE);
+    console.log(this.props.users);
     return (
       <div id="users">
         {!!onlineUsers.length && (

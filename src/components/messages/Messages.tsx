@@ -35,11 +35,13 @@ export default function Messages({
       message.authorId !== lastAuthorId ||
         (message.id - lastMessageId) > MAX_TIME_BETWEEN_GROUPED_MESSAGES
     ) {
-      currentGroup.push(message);
-    } else {
-      messageGroups.push(currentGroup);
+      if (currentGroup.length) messageGroups.push(currentGroup);
       currentGroup = [message];
+    } else {
+      currentGroup.push(message);
     }
+    lastAuthorId = message.authorId;
+    lastMessageId = message.id;
   })
   if (currentGroup.length) messageGroups.push(currentGroup);
 

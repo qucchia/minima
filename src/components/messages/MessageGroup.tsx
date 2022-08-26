@@ -4,11 +4,11 @@ import ProfilePicture from "./ProfilePicture";
 
 export default function MessageGroup({ messages, author }: {
   messages: APIMessage[];
-  author: User;
+  author?: User;
 }) {
   return (
     <div className="message-group">
-      <ProfilePicture image={author.profilePicture} />
+      <ProfilePicture image={author?.profilePicture} />
       <div className="messages">
         {messages.map(
           (message, i) =>

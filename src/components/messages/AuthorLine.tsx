@@ -5,13 +5,13 @@ export default function AuthorLine({
   message,
   buttons,
 }: {
-  author: User,
+  author?: User,
   message: APIMessage,
   buttons: boolean,
 }) {
   return (
     <span className="author-line">
-      <span className="author">{author.username}</span>
+      <span className="author">{author?.username || "Unknown"}</span>
       <span className="time">
         {new Date(message.id).toString().substring(16,21)}
       </span>

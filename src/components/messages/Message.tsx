@@ -8,29 +8,27 @@ export default function Message({
   message,
 }: {
   showAuthor: boolean;
-  author: User;
+  author?: User;
   message: MessageClass;
 }) {
   return (
-    <>
-      <span
-        className="message"
-        style={message.sent ? {} : { fontStyle: "italic" }}
-      >
-        {showAuthor &&
-          <AuthorLine
-            author={author}
-            message={message}
-            buttons={false}
-          />
-        }
-        {message.content && <OrgFormat content={message.content} />}
-      </span>
-      {message.image && (
-        <a href={message.image} target="_blank">
-          <img src={message.image} />
-        </a>
-      )}
-    </>
+    <span
+      className="message"
+      style={message.sent ? {} : { fontStyle: "italic" }}
+    >
+      {showAuthor &&
+        <AuthorLine
+          author={author}
+          message={message}
+          buttons={false}
+        />
+      }
+      {message.content && <OrgFormat content={message.content} />}
+    {message.image && (
+      <a href={message.image} target="_blank">
+        <img src={message.image} />
+      </a>
+    )}
+    </span>
   )
 }

@@ -51,20 +51,30 @@ export default class App extends Component<{}, State> {
     const user = username ? { username, id, status } : undefined;
 
     // Load messages from Storage if stored
-    let messages: Message[];
-    try {
-      messages = JSON.parse(localStorage.getItem("messages") || "[]")
-        .map((messageAPI) => new Message(messageAPI));
-    } catch (e) {
-      console.log("Invalid local Storage: clearing");
-      messages = [];
-      localStorage.setItem("messages", "[]");
+    function getMessages(): Message[] {
+      const queryString = window.location.search;
+      if (queryString === "?clear") {
+        console.log("Clearing messages")
+        localStorage.setItem("messages", "[]");
+        return [];
+      }
+      
+      let messages: Message[];
+      try {
+        messages = JSON.parse(localStorage.getItem("messages") || "[]")
+          .map((messageAPI) => new Message(messageAPI));
+      } catch (e) {
+        console.log("Invalid local Storage: clearing");
+        messages = [];
+        localStorage.setItem("messages", "[]");
+      }
+      return messages;
     }
-    
+
     this.state = {
       user,
       users: [],
-      messages,
+      messages: getMessages(),
       connectionStatus: ConnectionStatus.CONNECTING,
       scrolledToBottom: true,
       loadedAll: false,
@@ -131,7 +141,7 @@ export default class App extends Component<{}, State> {
           let messages = this.state.messages;
           wsMessage.messages.forEach((msg) => {
             if (!messages.find((m) => m.id === msg.id)) {
-              messages.push(msg);
+              messages.push(new Message(msg));
             }
           });
           

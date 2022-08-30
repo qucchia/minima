@@ -1,7 +1,7 @@
 run = "npm run dev"
 entrypoint = "src/App.tsx"
 
-hidden = [".config", "tsconfig.json", "tsconfig.node.json", "vite.config.js", ".gitignore"]
+hidden = []
 
 [nix]
 channel = "stable-21_11"

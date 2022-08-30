@@ -1,0 +1,8 @@
+#+title:Minima
+
+Minima is a work-in-progress chatting web application. See also the app's [[https://github.com/qucchia/minima-server/][server]].
+
+* Tools
+
+- [[https://remixicon.com/][Remixicon]]
+- [[https://vitejs.dev/][Vite]]

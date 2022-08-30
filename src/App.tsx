@@ -219,6 +219,41 @@ export default class App extends Component<{}, State> {
       this.setState({ hover: undefined });
     }
   }
+
+  handleChangeName = () => this.setState({ enterName: true });
+
+  handleUploadProfilePicture = (imageString: string) => {
+    const image = new Image();
+    image.addEventListener("load", (imageEvent) => {
+      // Resize image
+      const canvas = document.createElement('canvas');
+      const max_size = 32;
+      let width = image.width;
+      let height = image.height;
+      if (width > height) {
+        if (width > max_size) {
+          height *= max_size / width;
+          width = max_size;
+        }
+      } else {
+        if (height > max_size) {
+            width *= max_size / height;
+            height = max_size;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      const resizedImage = dataURLToBlob(dataUrl);
+      
+      const user = this.state.user;
+      user.profilePicture = resizedImage;
+      this.send({ type: "user", user });
+      this.setState({ user });
+    })
+    image.src = imageString;
+  }
   
   render() {
     return (
@@ -247,9 +282,10 @@ export default class App extends Component<{}, State> {
             }
           })()}
           <TextBox
-            onSend={this.handleSend}
             enterName={!this.state.user || !this.state.user.username}
-            onChangeName={() =>  this.setState({ enterName: true })}
+            onSend={this.handleSend}
+            onChangeName={this.handleChangeName}
+            onUploadProfilePicture={this.handleUploadProfilePicture}
           />
         </footer>
         <aside>

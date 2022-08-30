@@ -1,11 +1,12 @@
 import { Component } from "react";
-import ButtonIcon from "./ButtonIcon";
-import Icon from "./Icon";
+import ButtonIcon from "./ui/ButtonIcon";
+import UploadButton from "./ui/UploadButton";
 
 type Props = {
   onSend: (message: string | undefined, options?: any) => void;
   enterName: boolean;
   onChangeName: () => void;
+  onUploadProfilePicture: (image: string) => void;
 }
 
 export default class TextBox extends Component<Props, {
@@ -27,29 +28,26 @@ export default class TextBox extends Component<Props, {
             Enter&nbsp;a&nbsp;nickname:
           </label>
           : <>
-            <label id="upload-label" htmlFor="upload" title="Upload">
-              <Icon icon="chat-upload" />
-            </label>
-            <input
-              type="file"
-              name="upload"
-              id="upload"
-              hidden
+            <UploadButton
+              name="upload-image"
+              title="Upload image"
+              icon="image-add"
               accept="image/*"
-              onChange={(e) => {
-                const reader = new FileReader();
-                reader.addEventListener('load', (event) => {
-                  this.props.onSend(undefined, {
-                    image: event.target?.result as string
-                  });
-                });
-                reader.readAsDataURL((e.target.files as FileList)[0]);
-              }}
+              onUpload={(image: string) =>
+                this.props.onSend(undefined, { image })}
             />
             <ButtonIcon
               icon="edit"
               title="Change nickname"
               onClick={this.props.onChangeName}
+            />
+            <UploadButton
+              name="upload-profile-picture"
+              title="Upload profile picture"
+              icon="user-add"
+              accept="image/*"
+              onUpload={(image: string) =>
+                this.props.onUploadProfilePicture(image)}
             />
           </>}
         <textarea
